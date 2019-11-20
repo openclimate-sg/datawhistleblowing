@@ -24,10 +24,10 @@ These instructions have been tested with Ubuntu 18.0.4 and Node 11.14.0.
 
 ### Local development
 
-Install `npx` and `http-server` if you haven't already:
+Install `npx`:
 
 ```bash
-npm install -g npx http-server
+npm install -g npx
 ```
 
 Clone this repository and its `semaphore` submodule:
