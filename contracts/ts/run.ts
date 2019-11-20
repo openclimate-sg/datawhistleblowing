@@ -366,7 +366,7 @@ const main = async () => {
         externalNullifier,
     )
     let witness = result.witness
-    console.log('Generating zk-SNARK proof...')
+    console.log('Generating zk-SNARK proof that the witness is part of the set of executives, but which does not reveal their identity...')
     const proof = await genProof(witness, provingKey)
     const publicSignals = genPublicSignals(witness, circuit)
     const isValid = verifyProof(verifyingKey, proof, publicSignals)
