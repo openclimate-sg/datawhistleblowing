@@ -1,64 +1,16 @@
-# semaphore-ui
+# Data Whistleblowing
 
-This is a user interface which demonstrates the features of
+This is a simple proof of concept of a data reporting and anonymous
+whistleblowing mechanism.  Under the hood, it uses Ethereum smart contracts and
 [Semaphore](https://github.com/kobigurk/semaphore), a zero-knowledge signalling
 gadget.
 
+While the core functionality is original, much of the scaffolding in this
+repository is a fork of
+[semaphore-ui](https://github.com/weijiekoh/semaphore-ui).
+
 More information about Semaphore can be found
 [here](https://medium.com/coinmonks/to-mixers-and-beyond-presenting-semaphore-a-privacy-gadget-built-on-ethereum-4c8b00857c9b).
-
-This UI uses [`libsemaphore`](https://github.com/weijiekoh/libsemaphore), a
-library which provides cruical cryptographic helper functions to Semaphore
-clients, such as mixers or anonymous voting apps.
-
-It provides following features:
-
-1. Generate an `Identity` (comprised of an EdDSA keypair, identity nullifier,
-   and idenitty trapdoor)
-
-2. Download and parse a Semaphore circuit, proving key, and verification key
-
-3. Download leaves from a Semaphore contract deployed on the Kovan testnet
-
-4. Add an external nullifier to the Semaphore contract
-
-5. Broadcast a signal to the Semaphore contract; this involves generating a
-   zk-SNARK proof and selecting an external nullifier which the signal will be
-   for.
-
-The [Semaphore.sol](./semaphore/semaphorejs/contracts/Semaphore.sol)
-contract deployed at
-[`0x3a2CeFF007fE5D734529fa7eecdee5877F32b486`](https://kovan.etherscan.io/address/0x3a2CeFF007fE5D734529fa7eecdee5877F32b486)
-supports `2 ** 12 = 4096` identitity registrations. To support a larger number,
-you have to use a different `circuit.json`, `proving_key.bin`, and
-`verifier.sol`.
-
-The [`SemaphoreClient.sol`](./contracts/sol/SemaphoreClient.sol) contract, deployed at 
-[`0x7d2000244d38b7E293Ef43b1ccFBD140fA5d904b`](https://kovan.etherscan.io/address/0x7d2000244d38b7E293Ef43b1ccFBD140fA5d904b)
-is a simple interface to the following
-Semaphore contract functions:
-
-- `insertIdentity`: register an *identity commitment*
-- `addExternalNullifier`: add an external nullifier to the Semaphore contract
-- `broadcastSignal`: broadcast an arbitary string in zero-knowledge
-
-In this implementation of a Semaphore client, the deployment script deploys a
-Semaphore contract and a SemaphoreClient contract, and sets the address of the
-latter as the owner of the former. This allows anyone to bypass Semaphore's
-`onlyOwner` guards in some of its functions. A mixer, for instance, would
-require a deposit to be paid before invoking `insertIdentity`.
-
-The frontend is built using React. Webpack is
-[configured](./frontend/webpack.config.js) to use Terser to compress **but not
-mangle** the Javascript source code, and thereby prevent errors during witness
-generation.
-
-## Example
-
-This [broadcast
-transaction](https://kovan.etherscan.io/tx/0x50aef915da2f84164888d1b6c3501bdacb7e9344e46b5d04183114f91b29cccb)
-that broadcasted the string 'Hello, world' shows `48656c6c6f2c20776f726c6421`
-at the end of the transaction data, which is hexadecimal for said string.
 
 ## Local development and testing
 
@@ -81,8 +33,8 @@ npm install -g npx http-server
 Clone this repository and its `semaphore` submodule:
 
 ```bash
-git clone git@github.com:weijiekoh/semaphore-ui.git && \
-cd semaphore-ui && \
+git clone git@github.com:weijiekoh/datawhistleblowing.git && \
+cd datawhistleblowing && \
 git submodule update --init
 ```
 
@@ -110,89 +62,10 @@ cd contracts
 npm run ganache
 ```
 
-To deploy the contracts to the Ganache testnet
-your home directory named `SU_TESTNET_DEPLOY_KEY` containing the following string:
-
-```
-0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
-```
-
-**Note:** do not store any mainnet funds in the account associated with this
-address or they will be swept away.
-
-Staying inside the `contracts` directory, compile and deploy the contracts. You
-need an [`solc`](https://github.com/ethereum/solidity) 0.5.X binary somewhere in your filesystem.
+Staying inside the `contracts` directory, run the demo script. You need an
+[`solc`](https://github.com/ethereum/solidity) 0.5.X binary somewhere in your
+filesystem.
 
 ```bash
-node build/compileAndDeploy.js -s /path/to/solc -o ./abi -i ./sol/
+node build/run.js -s /path/to/solc -o ./abi -i ./sol/
 ```
-
-Next navigate to the `frontend` directory and rebuild the source:
-
-```bash
-cd ../frontend
-npm run build
-```
-
-To launch a hot-reload development server, run:
-
-```bash
-npm run webpack-watch
-```
-
-This local server is configured to retrieve the circuit and proving key from
-`http://localhost:8000`. To run a local file server, install `http-server`:
-
-```bash
-npm i -g http-server
-```
-
-Launch the server:
-
-```
-# in the base directory
-./scripts/serveSnarks.sh
-```
-
-To build a production frontend for the local testnet, run:
-
-```bash
-# start from the base semaphore-ui/ directory
-
-npm run build && cd frontend && npm run webpack-build
-```
-
-## Production
-
-To deploy the contracts to the Kovan testnet, first create a file in your home
-directory named `SU_KOVAN_DEPLOY_KEY` containing the private key of an Ethereum
-account with some Kovan ETH:
-
-```
-0x................................................................
-```
-
-Next, rebuild the source using the `kovan` NODE_ENV variable, which will make the `config` submodule select the `kovan.yaml` config file:
-
-```
-# in the base directory
-NODE_ENV=kovan npm run build
-```
-
-Next, deploy the contracts:
-
-```bash
-cd contracts/
-NODE_ENV=kovan npm run compileAndDeploy
-```
-
-Next, replace deployed contract addresses to `config/kovan.yaml`, and rebuild
-the frontend:
-
-```
-# in the base directory
-NODE_ENV=kovan npm run build && cd frontend && npm run webpack-build
-```
-
-If you receive a 401 error, replace the Kovan node URL in `config/kovan.yaml`
-with a functioning one.

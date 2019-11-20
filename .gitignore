@@ -3,7 +3,6 @@ exported_config.json
 **/build
 package-lock.json
 build/
-frontend/dist/*
 node_modules
 .DS_Store
 lerna-debug.log

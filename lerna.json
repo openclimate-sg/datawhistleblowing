@@ -2,7 +2,7 @@
   "packages": [
     "config",
     "contracts",
-    "frontend"
+    "cli"
   ],
   "version": "0.0.1",
   "npmClient": "npm"

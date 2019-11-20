@@ -1,0 +1,21 @@
+{
+  "name": "semaphore-cli",
+  "version": "0.0.1",
+  "description": "A demo CLI",
+  "main": "build/index.js",
+  "scripts": {
+    "watch": "tsc --watch",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weijiekoh/ddc.git"
+  },
+  "author": "Koh Wei Jie",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "libsemaphore": "^0.0.14"
+  },
+  "devDependencies": {
+  }
+}
