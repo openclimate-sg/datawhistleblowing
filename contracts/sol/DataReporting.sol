@@ -32,6 +32,9 @@ contract DataReporting {
     // The amount currently seized when the whistle is blown
     uint256 public totalSeizedWei;
 
+    // The whistleblower's specified reward address
+    address payable whistleblowerRewardAddress;
+
     constructor(
         address _semaphore,
         uint256 _depositAmtWei,
@@ -83,6 +86,7 @@ contract DataReporting {
      * Allows a registered user to anonymously broadcast a signal.
      */
     function blowWhistle(
+        address payable _rewardAddress,
         bytes memory _signal,
         uint[2] memory _a,
         uint[2][2] memory _b,
@@ -92,6 +96,13 @@ contract DataReporting {
 
         require(totalLockedWei > totalSeizedWei, "DataReporting: the amount to seize must be smaller than the amount locked");
         totalSeizedWei = totalLockedWei;
+
+        require(
+            whistleblowerRewardAddress == 0x0000000000000000000000000000000000000000,
+            "DataReporting: only one whistleblower is currently supported"
+        );
+
+        whistleblowerRewardAddress = _rewardAddress;
 
         semaphore.broadcastSignal(
             _signal,
@@ -125,7 +136,9 @@ contract DataReporting {
     function seizeDeposit() public {
         require(msg.sender == investigator, "DataReporting: only the investigator can seize the deposit");
 
-        investigator.transfer(totalSeizedWei);
+        uint256 halfSeized = totalSeizedWei.div(2);
+        investigator.transfer(halfSeized);
+        whistleblowerRewardAddress.transfer(halfSeized);
         totalSeizedWei = 0;
     }
 

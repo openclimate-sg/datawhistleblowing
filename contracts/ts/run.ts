@@ -64,6 +64,7 @@ const NUM_EXECUTIVES = config.numExecutives
 const LOCKUP_NUM = config.lockupNum
 const MAX_REPORT_NUM = config.maxReportNum
 const DEPOSIT_AMT_ETH = config.depositAmtEth.toString()
+const WHISTLEBLOWER_REWARD_ADDRESS = '0x1111111111111111111111111111111111111111'
 
 let companyWallet
 let investigatorWallet
@@ -373,6 +374,7 @@ const main = async () => {
     const formatted = formatForVerifierContract(proof, publicSignals)
 
     const whistleblowTx = await drContract.blowWhistle(
+        WHISTLEBLOWER_REWARD_ADDRESS,
         ethers.utils.toUtf8Bytes(signal),
         formatted.a,
         formatted.b,
@@ -392,16 +394,22 @@ const main = async () => {
 
     console.log('The investigator has decided to seize the funds.')
 
+    const whistleblowerBalanceBefore = await provider.getBalance(WHISTLEBLOWER_REWARD_ADDRESS)
     const investigatorBalanceBefore = await provider.getBalance(investigatorWallet.address)
     const drContractWithInvestigator = drContract.connect(investigatorWallet)
     const seizeTx = await drContractWithInvestigator.seizeDeposit()
     await seizeTx.wait()
     const investigatorBalanceAfter = await provider.getBalance(investigatorWallet.address)
+    const whistleblowerBalanceAfter = await provider.getBalance(WHISTLEBLOWER_REWARD_ADDRESS)
 
-    const balanceDiff = ethers.utils.formatEther(
+    const investigatorBalanceDiff = ethers.utils.formatEther(
         (investigatorBalanceAfter.sub(investigatorBalanceBefore)).toString(),
     )
-    console.log(`The investigator's balance increased by ${balanceDiff} ETH.`)
+    const whistleblowerBalanceDiff = ethers.utils.formatEther(
+        (whistleblowerBalanceAfter.sub(whistleblowerBalanceBefore)).toString(),
+    )
+    console.log(`The whistleblower's reward address balance increased by ${whistleblowerBalanceDiff} ETH.`)
+    console.log(`The investigator's balance increased by ${investigatorBalanceDiff} ETH.`)
     console.log('Note that the investigator paid gas for this transaction.')
 
     console.log()
