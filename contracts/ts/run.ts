@@ -86,24 +86,6 @@ const readFile = (abiDir: string, filename: string) => {
     return fs.readFileSync(path.join(abiDir, filename)).toString()
 }
 
-const compileAbis = async (
-    abiDir: string,
-    solDir: string,
-    solcBinaryPath: string = 'solc',
-) => {
-    shell.mkdir('-p', abiDir)
-    const solcCmd = `${solcBinaryPath} -o ${abiDir} ${solDir}/*.sol --overwrite --abi`
-    const result = execute(solcCmd)
-
-    // Copy ABIs to the frontend and backend modules
-    shell.mkdir('-p', '../frontend/abi/')
-
-    shell.ls(path.join(abiDir, '*.abi')).forEach((file) => {
-        const baseName = path.basename(file)
-        shell.cp('-R', file, `../frontend/abi/${baseName}.json`)
-    })
-}
-
 const compileAndDeploy = async (
     abiDir: string,
     solDir: string,
