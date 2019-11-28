@@ -22,7 +22,7 @@ For the purposes of this hackathon, we have implemented a simple proof of concep
 
 Each executive registers their cryptographic identity into an Ethereum smart contract (based on Semaphore (https://weijiekoh.github.io/semaphore-ui/, https://github.com/kobigurk/semaphore/), a zero-knowledge signalling gadget), so that anyone can anonymously prove their membership in the set and broadcast a whistleblowing signal.
 
-![](src/climatecops.gif)
+![](./climatecops.gif)
 
 We then simulate the following process of the company reporting data, along with a deposit, for five days in a row, and an executive anonymously blowing the whistle on data reported on the fifth day. This locks up part of the total deposit. After an investigation (outside the system), an investigator then seizes part of the total amount deposited, and rewards part of the seized funds to a separate address specified by the whistleblower when she blew the whistle earlier.
 
