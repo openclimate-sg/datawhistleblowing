@@ -13,7 +13,7 @@ More information about Semaphore can be found
 [here](https://medium.com/coinmonks/to-mixers-and-beyond-presenting-semaphore-a-privacy-gadget-built-on-ethereum-4c8b00857c9b).
 
 - please find full write-up at https://github.com/openclimate-sg/whitepaper/wiki
-- please find smart contracts and zk-SNARK circuits at https://github.com/openclimate-sg/datawhistleblowing
+- please find UI at https://github.com/openclimate-sg/datawhistleblowing_ui
 - to interact with the main contract, `DataReporting.sol`, you can directly use the etherscan interface at https://kovan.etherscan.io/address/0x7B591C58f19292cE068b83375c470744B3a7eab1#writeContract
 
 
